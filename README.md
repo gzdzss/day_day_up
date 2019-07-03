@@ -115,11 +115,11 @@
 
 ## 运行时数据区域
 
-![img](https://pic2.zhimg.com/80/v2-622b2ed9e429e2d65a9def2ef5a23f1e_hd.jpg)
+![img](https://raw.githubusercontent.com/gzdzss/day_day_up/master/image/jvm/jvm1.jpg)
 
 
 
-  ![img](https://pic4.zhimg.com/80/v2-72c52b349ebaec1f033a2506a4be8319_hd.jpg)
+  ![img](https://raw.githubusercontent.com/gzdzss/day_day_up/master/image/jvm/jvm2.jpg)
 
 
 
