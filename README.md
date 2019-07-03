@@ -155,6 +155,133 @@ Java堆是线程共享的，在虚拟机启动时创建。此区域的唯一目�
 
 
 
+## 参数
+
+| **参数名称**                | **含义**                                                   | **默认值**           |                                                              |
+| --------------------------- | ---------------------------------------------------------- | -------------------- | ------------------------------------------------------------ |
+| -Xms                        | 初始堆大小                                                 | 物理内存的1/64(<1GB) | 默认(MinHeapFreeRatio参数可以调整)空余堆内存小于40%时，JVM就会增大堆直到-Xmx的最大限制. |
+| -Xmx                        | 最大堆大小                                                 | 物理内存的1/4(<1GB)  | 默认(MaxHeapFreeRatio参数可以调整)空余堆内存大于70%时，JVM会减少堆直到 -Xms的最小限制 |
+| -Xmn                        | 年轻代大小(1.4or lator)                                    |                      | **注意**：此处的大小是（eden+ 2 survivor space).与jmap -heap中显示的New gen是不同的。 整个堆大小=年轻代大小 + 年老代大小 + 持久代大小. 增大年轻代后,将会减小年老代大小.此值对系统性能影响较大,Sun官方推荐配置为整个堆的3/8 |
+| -XX:NewSize                 | 设置年轻代大小(for 1.3/1.4)                                |                      |                                                              |
+| -XX:MaxNewSize              | 年轻代最大值(for 1.3/1.4)                                  |                      |                                                              |
+| -XX:PermSize                | 设置持久代(perm gen)初始值                                 | 物理内存的1/64       |                                                              |
+| -XX:MaxPermSize             | 设置持久代最大值                                           | 物理内存的1/4        |                                                              |
+| -Xss                        | 每个线程的堆栈大小                                         |                      | JDK5.0以后每个线程堆栈大小为1M,以前每个线程堆栈大小为256K.更具应用的线程所需内存大小进行 调整.在相同物理内存下,减小这个值能生成更多的线程.但是操作系统对一个进程内的线程数还是有限制的,不能无限生成,经验值在3000~5000左右 一般小的应用， 如果栈不是很深， 应该是128k够用的 大的应用建议使用256k。这个选项对性能影响比较大，需要严格的测试。（校长） 和threadstacksize选项解释很类似,官方文档似乎没有解释,在论坛中有这样一句话:"” -Xss is translated in a VM flag named ThreadStackSize” 一般设置这个值就可以了。 |
+| -*XX:ThreadStackSize*       | Thread Stack Size                                          |                      | (0 means use default stack size) [Sparc: 512; Solaris x86: 320 (was 256 prior in 5.0 and earlier); Sparc 64 bit: 1024; Linux amd64: 1024 (was 0 in 5.0 and earlier); all others 0.] |
+| -XX:NewRatio                | 年轻代(包括Eden和两个Survivor区)与年老代的比值(除去持久代) |                      | -XX:NewRatio=4表示年轻代与年老代所占比值为1:4,年轻代占整个堆栈的1/5 Xms=Xmx并且设置了Xmn的情况下，该参数不需要进行设置。 |
+| -XX:SurvivorRatio           | Eden区与Survivor区的大小比值                               |                      | 设置为8,则两个Survivor区与一个Eden区的比值为2:8,一个Survivor区占整个年轻代的1/10 |
+| -XX:LargePageSizeInBytes    | 内存页的大小不可设置过大， 会影响Perm的大小                |                      | =128m                                                        |
+| -XX:+UseFastAccessorMethods | 原始类型的快速优化                                         |                      |                                                              |
+| -XX:+DisableExplicitGC      | 关闭System.gc()                                            |                      | 这个参数需要严格的测试                                       |
+| -XX:MaxTenuringThreshold    | 垃圾最大年龄                                               |                      | 如果设置为0的话,则年轻代对象不经过Survivor区,直接进入年老代. 对于年老代比较多的应用,可以提高效率.如果将此值设置为一个较大值,则年轻代对象会在Survivor区进行多次复制,这样可以增加对象再年轻代的存活 时间,增加在年轻代即被回收的概率 该参数只有在串行GC时才有效. |
+| -XX:+AggressiveOpts         | 加快编译                                                   |                      |                                                              |
+| -XX:+UseBiasedLocking       | 锁机制的性能改善                                           |                      |                                                              |
+| -Xnoclassgc                 | 禁用垃圾回收                                               |                      |                                                              |
+| -XX:SoftRefLRUPolicyMSPerMB | 每兆堆空闲空间中SoftReference的存活时间                    | 1s                   | softly reachable objects will remain alive for some amount of time after the last time they were referenced. The default value is one second of lifetime per free megabyte in the heap |
+| -XX:PretenureSizeThreshold  | 对象超过多大是直接在旧生代分配                             | 0                    | 单位字节 新生代采用Parallel Scavenge GC时无效 另一种直接在旧生代分配的情况是大的数组对象,且数组中无外部引用对象. |
+| -XX:TLABWasteTargetPercent  | TLAB占eden区的百分比                                       | 1%                   |                                                              |
+| -XX:+*CollectGen0First*     | FullGC时是否先YGC                                          | false                |                                                              |
+
+## GC
+
+### 引用计数算法
+
+为对象添加一个引用计数器，每当有一个地方引用它时，技术起值就加1，当引用失效时，计数器值就减1，任何时刻计数器为0的对象就是不可能再被使用的。
+
+
+
+设置 VM options: -XX:+PrintGCDetails
+
+```java
+public class ReferenceCountingGC {
+
+
+    public Object instance = null;
+    //这个属性的作用是占点内存，方便看GC日志是否被回收
+    private static final int _1MB = 1024 * 1024;
+    private byte[] bigSize = new byte[2 * _1MB];
+
+    public static void testGC() {
+        ReferenceCountingGC objA = new ReferenceCountingGC();
+        ReferenceCountingGC objB = new ReferenceCountingGC();
+        objA.instance = objB;
+        objB.instance = objA;
+        objA = null;
+        objB = null;
+
+        //假设这里发生GC，  objA 和objB 是否能被回收
+
+        System.gc();
+    }
+
+    public static void main(String[] args) {
+        testGC();
+    }
+
+}
+```
+
+```java
+[GC (System.gc()) [PSYoungGen: 7997K->808K(75776K)] 7997K->816K(249344K), 0.0009705 secs] [Times: user=0.00 sys=0.00, real=0.02 secs] 
+[Full GC (System.gc()) [PSYoungGen: 808K->0K(75776K)] [ParOldGen: 8K->696K(173568K)] 816K->696K(249344K), [Metaspace: 3178K->3178K(1056768K)], 0.0037006 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] 
+Heap
+ PSYoungGen      total 75776K, used 1951K [0x000000076b580000, 0x0000000770a00000, 0x00000007c0000000)
+  eden space 65024K, 3% used [0x000000076b580000,0x000000076b767cb8,0x000000076f500000)
+  from space 10752K, 0% used [0x000000076f500000,0x000000076f500000,0x000000076ff80000)
+  to   space 10752K, 0% used [0x000000076ff80000,0x000000076ff80000,0x0000000770a00000)
+ ParOldGen       total 173568K, used 696K [0x00000006c2000000, 0x00000006cc980000, 0x000000076b580000)
+  object space 173568K, 0% used [0x00000006c2000000,0x00000006c20ae178,0x00000006cc980000)
+ Metaspace       used 3192K, capacity 4496K, committed 4864K, reserved 1056768K
+  class space    used 344K, capacity 388K, committed 512K, reserved 1048576K
+```
+
+从结果可知道 虚拟机并不是通过引用计数算法来判断对象是否存活
+
+
+
+### 可达性分析算法（Reachability Analysis） 
+
+在主流实现中，都是采用可达性分析算法判断对象是否存活。基本思路就是通过一系列称为“GC Roots”的对象作为起点，从这些节点开始向下搜索，搜索走过的路径为专用链（Reference CChain）当一个对象到GC Roots没有任何引用链相连时，证明此对象是不可用的。
+
+
+
+java中GC Roots对象包括 下面几种
+
+虚拟机栈 
+
+方法区中的静态属性引用的对象
+
+方法区中常量引用的对象
+
+本地方法中的JNI（即Native方法）引用的对象
+
+
+
+### 长期存活的对象进入老年代
+
+虚拟机对每个对象定义了一个年龄（Age）的计数器。如果对象Eden出生并且经过第一次Minor GC后 任然存活，并且能被Survivor容纳的话，将被移动到Surivor空间中，并且年龄设为1.对象在Survior区中每“熬过”一次Minor GC. 年龄就增加1岁，当年龄加到一定的程度（默认15），对象晋升老年代，可以通过参数 -XX： MaxTenuringThreshold 设置 
+
+
+
+
+
+
+
+### jdk命令工具
+
+
+
+- jps 显示系统内所有虚拟机进程
+- jstat  收集虚拟机各方面运行数据
+- jinfo 显示虚拟机配置
+- jmap 生产虚拟机内存转储快照（heapdump文件）
+- jhat 虚拟机转快照分析工具
+- jstack 显示虚拟机的线程快照
+- jconsole java监控管理控制台
+- VisualVM 多合一故障处理工具
+
+
+
 # 分布式
 
 ## 分布式事务
