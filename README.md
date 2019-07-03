@@ -115,7 +115,21 @@
 
   
 
+# 分布式
 
+## 分布式事务
 
+[分布式事务](https://juejin.im/post/5b5a0bf9f265da0f6523913b)
 
+ACID
+
+2PC
+
+TCC
+
+本地消息表
+
+mq
+
+saga
 
