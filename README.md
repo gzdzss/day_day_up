@@ -10,11 +10,11 @@
 >
 > [《java队列——queue详细分析》](https://www.cnblogs.com/lemon-flm/p/7877898.html)
 
-| 类型          | 说明       | 例                                                        |
-| ------------- | ---------- | --------------------------------------------------------- |
-| Deque         | 双端队列   | LinkedList  ,ArrayDeque                                   |
-| AbstractQueue | 非阻塞队列 | ConcurrentLinkedQueue，PriorityQueue（优先队列）          |
-| BlockingQueue | 阻塞队列   | PriorityBlockingQueue（优先阻塞队列），ArrayBlockingQueue |
+| 类型          | 说明                                                         | 例                                                        |
+| ------------- | ------------------------------------------------------------ | --------------------------------------------------------- |
+| Deque         | 双端队列                                                     | LinkedList  ,ArrayDeque                                   |
+| AbstractQueue | 非阻塞队列                                                   | ConcurrentLinkedQueue，PriorityQueue（优先队列）          |
+| BlockingQueue | [阻塞队列](https://www.cnblogs.com/jackyuj/archive/2010/11/24/1886553.html) | PriorityBlockingQueue（优先阻塞队列），ArrayBlockingQueue |
 
 
 
@@ -304,8 +304,8 @@ java中GC Roots对象包括 下面几种
 - 限期等待（Timed Waiting）:处于这种状态的线程也不会被分配CPU执行时间，不过无须等待其他线程显示地唤醒，在一定时间后会由系统自动唤醒。例：
 
   - Thread.sleep()方法
-  - 没有设置Timeout参数的 Object.wait()方法
-  - 没有设置Timeout参数的Thread.join()方法
+  - 有设置Timeout参数的 Object.wait()方法
+  - 有设置Timeout参数的Thread.join()方法
   - LockSupport.parkNanos()方法
   - LockSupport.parkUntil()方法
 - 阻塞（Blocked）:线程被设置为阻塞，与等待的区别是：阻塞状态在等待着获取到一个排他锁，这个事件将在另外一个线程放弃这个锁的时候发生。
@@ -313,7 +313,7 @@ java中GC Roots对象包括 下面几种
 
 - 结束（Terminated）:已终止线程的线程状态，线程已经结束执行。
 
-![img](https://raw.githubusercontent.com/gzdzss/day_day_up/master/image/thread/thread1.png)
+![img](https://raw.githubusercontent.com/gzdzss/day_day_up/master/image/thread/thread1.jpeg)
 
 
 
