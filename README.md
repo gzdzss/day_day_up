@@ -290,6 +290,65 @@ java中GC Roots对象包括 下面几种
 
 
 
+[thread类源码解读](https://segmentfault.com/a/1190000016058789)
+
+
+
+## 线程创建
+
+
+
+### 创建方式
+
+- 继承Thread类，覆写run方法
+- 实现Runnale接口，将它作为target参数传递给Thread类构造函数
+
+
+
+### start运行
+
+```java
+System.out.println(Thread.currentThread().getName());
+Thread thread = new Thread(new Runnable() {
+    @Override
+    public void run() {
+        System.out.println(Thread.currentThread().getName());
+    }
+});
+thread.start();
+```
+
+```java
+main
+Thread-0
+```
+
+
+
+### run运行
+
+```java
+System.out.println(Thread.currentThread().getName());
+Thread thread = new Thread(new Runnable() {
+    @Override
+    public void run() {
+        System.out.println(Thread.currentThread().getName());
+    }
+});
+thread.run();
+```
+
+```java
+main
+main
+```
+
+
+
+结论：启动一个线程一定要调用该线程的start方法，否则，并不会创建出新的线程来。
+
+
+
 ## 线程状态
 
 - 新建（New): 创建后尚未启动的线程
@@ -317,7 +376,112 @@ java中GC Roots对象包括 下面几种
 
 
 
+### join
 
+
+
+demo1
+
+```java
+public class demo1 {
+
+    private static void printWithThread(String content) {
+        System.out.println("[" + Thread.currentThread().getName() + "线程]: " + content);
+    }
+
+    public static void main(String[] args) {
+        printWithThread("开始执行main方法");
+        Thread myThread = new Thread(() -> {
+            printWithThread("我在自定义的线程的run方法里");
+            printWithThread("我马上要休息1秒钟, 并让出CPU给别的线程使用.");
+            try {
+                Thread.sleep(1000);
+                printWithThread("已经休息了1秒, 又重新获得了CPU");
+                printWithThread("我休息好了, 马上就退出了");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        });
+        try {
+            myThread.start();
+            printWithThread("我在main方法里面, 我要等下面这个线程执行完了才能继续往下执行.");
+            myThread.join();
+            printWithThread("我在main方法里面, 马上就要退出了.");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+```
+
+```java
+[main线程]: 开始执行main方法
+[main线程]: 我在main方法里面, 我要等下面这个线程执行完了才能继续往下执行.
+[Thread-0线程]: 我在自定义的线程的run方法里
+[Thread-0线程]: 我马上要休息1秒钟, 并让出CPU给别的线程使用.
+[Thread-0线程]: 已经休息了1秒, 又重新获得了CPU
+[Thread-0线程]: 我休息好了, 马上就退出了
+[main线程]: 我在main方法里面, 马上就要退出了.
+```
+
+
+
+demo2
+
+```java
+public class demo2 {
+
+    private static void printWithThread(String content) {
+        System.out.println("[" + Thread.currentThread().getName() + "线程]: " + content);
+    }
+
+    public static void main(String[] args) {
+        printWithThread("开始执行main方法");
+        Thread myThread = new Thread(() -> {
+            printWithThread("我在自定义的线程的run方法里");
+            printWithThread("我马上要休息1秒钟, 并让出CPU给别的线程使用.");
+            try {
+                Thread.sleep(1000);
+                printWithThread("已经休息了1秒, 又重新获得了CPU");
+                printWithThread("我休息好了, 马上就退出了");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        });
+        try {
+            myThread.start();
+            printWithThread("我在main方法里面, 我要等下面这个线程执行完了才能继续往下执行.");
+            myThread.join(500);
+            printWithThread("我在main方法里面, 马上就要退出了.");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+```java
+[main线程]: 开始执行main方法
+[main线程]: 我在main方法里面, 我要等下面这个线程执行完了才能继续往下执行.
+[Thread-0线程]: 我在自定义的线程的run方法里
+[Thread-0线程]: 我马上要休息1秒钟, 并让出CPU给别的线程使用.
+[main线程]: 我在main方法里面, 马上就要退出了.
+[Thread-0线程]: 已经休息了1秒, 又重新获得了CPU
+[Thread-0线程]: 我休息好了, 马上就退出了
+```
+
+
+
+
+
+
+
+## AQS
+
+ ？？？？
 
 
 
