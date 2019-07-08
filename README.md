@@ -267,6 +267,8 @@ java中GC Roots对象包括 下面几种
 
 
 
+
+
 ### jdk命令工具
 
 
@@ -279,6 +281,39 @@ java中GC Roots对象包括 下面几种
 - jstack 显示虚拟机的线程快照
 - jconsole java监控管理控制台
 - VisualVM 多合一故障处理工具
+
+
+
+## volatile
+
+volatile变量只能保证可见性，在不符合以下的两条规则的运算场景中，我们仍要通过加锁(synchronized 或者 java.util.conturrent中的原子类)来保证原子性
+
+- 运算结果并不依赖变量的当前值，或者能够保证只有单一的线程修改变量的值
+- 变量不需要与其他的变量共同参与必变约束
+
+
+
+
+
+适合使用volatitle变量来控制并发，当shutdown()方法被调用时，能保证所有的线程中执行doWork()方法都立即停下来
+
+```java 
+volatile boolean shutdowonRequested;
+
+public void shutdown() {
+    shutdowonRequested = true;
+}
+
+public void doWork() {
+    while (!shutdowonRequested) {
+        // do stuff
+    }
+}
+```
+
+
+
+
 
 
 
