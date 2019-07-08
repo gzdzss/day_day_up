@@ -313,7 +313,11 @@ java中GC Roots对象包括 下面几种
 
 - 结束（Terminated）:已终止线程的线程状态，线程已经结束执行。
 
-![img](https://raw.githubusercontent.com/gzdzss/day_day_up/master/image/thread/thread1.jpg)
+![img](https://raw.githubusercontent.com/gzdzss/day_day_up/master/image/thread/thread1.png)
+
+
+
+
 
 
 
