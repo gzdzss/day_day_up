@@ -284,7 +284,48 @@ java中GC Roots对象包括 下面几种
 
 
 
+
+
+#  线程
+
+
+
+## 线程状态
+
+- 新建（New): 创建后尚未启动的线程
+- 运行（Runable）:就绪（ready）和运行中（running）两种状态笼统的称为“运行”。
+线程对象创建后，其他线程(比如main线程）调用了该对象的start()方法。该状态的线程位于可运行线程池中，等待被线程调度选中，获取CPU的使用权，此时处于就绪状态（ready）。就绪状态的线程在获得CPU时间片后变为运行中状态（running）。
+- 无限期等待（Waiting}:处于这种状态的线程，不会被分配CPU执行时间，它们要等待其他线程显示地唤醒。例：
+  - 没有设置Timeout参数的 Object.wait()方法
+  - 没有设置Timeout参数的Thread.join()方法
+  - LockSupport.park()方法
+
+
+- 限期等待（Timed Waiting）:处于这种状态的线程也不会被分配CPU执行时间，不过无须等待其他线程显示地唤醒，在一定时间后会由系统自动唤醒。例：
+
+  - Thread.sleep()方法
+  - 没有设置Timeout参数的 Object.wait()方法
+  - 没有设置Timeout参数的Thread.join()方法
+  - LockSupport.parkNanos()方法
+  - LockSupport.parkUntil()方法
+- 阻塞（Blocked）:线程被设置为阻塞，与等待的区别是：阻塞状态在等待着获取到一个排他锁，这个事件将在另外一个线程放弃这个锁的时候发生。
+
+
+- 结束（Terminated）:已终止线程的线程状态，线程已经结束执行。
+
+![img](https://raw.githubusercontent.com/gzdzss/day_day_up/master/image/thread/thread1.jpg)
+
+
+
 ## volatile
+
+
+
+关键字 vlolatile 可以说是java虚拟机提供最轻量级的同步机制，。
+
+
+
+
 
 volatile变量只能保证可见性，在不符合以下的两条规则的运算场景中，我们仍要通过加锁(synchronized 或者 java.util.conturrent中的原子类)来保证原子性
 
