@@ -2,6 +2,58 @@
 
 
 
+
+
+
+
+
+
+
+
+## Unsafe
+
+[Unsafe](https://tech.meituan.com/2019/02/14/talk-about-java-magic-class-unsafe.html)是位于sun.misc包下的一个类，主要提供一些用于执行低级别、不安全操作的方法，如直接访问系统内存资源、自主管理内存资源等，这些方法在提升Java运行效率、增强Java语言底层资源操作能力方面起到了很大的作用。但由于Unsafe类使Java语言拥有了类似C语言指针一样操作内存空间的能力，这无疑也增加了程序发生相关指针问题的风险。在程序中过度、不正确使用Unsafe类会使得程序出错的概率变大，使得Java这种安全的语言变得不再“安全”，因此对Unsafe的使用一定要慎重。
+
+
+
+Unsafe提供的API大致可分为内存操作、CAS、Class相关、对象操作、线程调度、系统信息获取、内存屏障、数组操作等几类
+
+![unsafe1.png](https://github.com/gzdzss/day_day_up/blob/master/image/unsafe/unsafe1.png?raw=true)
+
+
+
+
+
+## Atomiclnteger
+
+[AtomicInteger](https://zhuanlan.zhihu.com/p/37302263) 是一个 Java concurrent 包提供的一个原子类，通过这个类可以对 Integer 进行一些原子操作。这个类的源码比较简单，主要是依赖于 sun.misc.Unsafe 提供的一些 native 方法保证操作的原子性。
+
+
+
+### getAndAdd
+
+1. 根据对象 var1 和内存偏移量 var2 来定位内存地址，获取当前地址值
+2. 循环通过 CAS 操作更新当前地址值直到更新成功
+3. 返回旧值
+
+
+
+
+
+## AQS
+
+
+
+
+
+### [ReentrantLock](https://zhuanlan.zhihu.com/p/37427030) 
+
+
+
+
+
+
+
 # 数据结构
 
 ## Queue
@@ -479,11 +531,7 @@ public class demo2 {
 
 
 
-## AQS
-
- ？？？？
-
-
+ 
 
 ## volatile
 
