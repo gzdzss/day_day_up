@@ -46,9 +46,19 @@ Unsafe提供的API大致可分为内存操作、CAS、Class相关、对象操作
 
 
 
-### [ReentrantLock](https://zhuanlan.zhihu.com/p/37427030) 
+###  [ReentrantLock](https://juejin.im/post/5aeb0a8b518825673a2066f0) 
+
+**支持重入性，表示能够对共享资源能够重复加锁，即当前线程获取该锁再次获取不会被阻塞**
 
 
+
+ReentrantLock支持两种锁：**公平锁**和**非公平锁**。**何谓公平性，是针对获取锁而言的，如果一个锁是公平的，那么锁的获取顺序就应该符合请求上的绝对时间顺序，满足FIFO**。
+
+
+
+
+
+###  [Condition](https://zhuanlan.zhihu.com/p/39594030) 
 
 
 
@@ -567,6 +577,33 @@ public void doWork() {
     }
 }
 ```
+
+
+
+# 线程池
+
+
+
+
+
+Java通过Executors提供四种线程池，分别为：
+
+- newCachedThreadPool创建一个可缓存线程池，如果线程池长度超过处理需要，可灵活回收空闲线程，若无可回收，则新建线程。
+- newFixedThreadPool 创建一个定长线程池，可控制线程最大并发数，超出的线程会在队列中等待。
+- newScheduledThreadPool 创建一个定长线程池，支持定时及周期性任务执行。
+- newSingleThreadExecutor 创建一个单线程化的线程池，它只会用唯一的工作线程来执行任务，保证所有任务按照指定顺序(FIFO, LIFO, 优先级)执行。
+- newWorkStealingPool  (jdk1.8引入)会创建一个含有足够多线程的线程池，来维持相应的并行级别，它会通过工作窃取的方式，使得多核的 CPU 不会闲置，总会有活着的线程让 CPU 去运行。
+
+
+
+
+
+## [ForkJoinPool](http://blog.dyngr.com/blog/2016/09/15/java-forkjoinpool-internals/)  
+
+- `ForkJoinPool` 不是为了替代 `ExecutorService`，而是它的补充，在某些应用场景下性能比 `ExecutorService` 更好。（见 *Java Tip: When to use ForkJoinPool vs ExecutorService* ）
+- **ForkJoinPool 主要用于实现“分而治之”的算法，特别是分治之后递归调用的函数**，例如 quick sort 等。
+- `ForkJoinPool` 最适合的是计算密集型的任务，如果存在 I/O，线程间同步，`sleep()` 等会造成线程长时间阻塞的情况时，最好配合使用 `ManagedBlocker`。
+
 
 
 
