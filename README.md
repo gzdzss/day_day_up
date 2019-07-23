@@ -60,9 +60,9 @@ List 是一个双向链表，可以通过 lpush 和 rpop 写入和读取消息
 
 可以使用 Redis 自带的 SETNX 命令实现分布式锁，除此之外，还可以使用官方提供的 RedLock 分布式锁实现。
 
+ 
 
-
-
+### [jedisCommand接口说明](https://segmentfault.com/a/1190000002870317)
 
 
 
