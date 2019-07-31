@@ -670,6 +670,14 @@ Java通过Executors提供四种线程池，分别为：
 
 
 
+## 线程队列拒绝策略
+
+ThreadPoolExecutor.AbortPolicy()                抛出java.util.concurrent.RejectedExecutionException异常
+ThreadPoolExecutor.CallerRunsPolicy()         重试添加当前的任务，他会自动重复调用execute()方法
+ThreadPoolExecutor.DiscardOldestPolicy()     抛弃旧的任务
+ThreadPoolExecutor.DiscardPolicy()             抛弃当前的任务
+
+
 
 # 分布式
 
