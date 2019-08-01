@@ -679,6 +679,38 @@ ThreadPoolExecutor.DiscardPolicy()             抛弃当前的任务
 
 
 
+
+
+
+
+## ThreadPoolExecutor
+
+```java
+ThreadPoolExecutor(int corePoolSize,
+                        int maximumPoolSize,
+                        long keepAliveTime,
+                        TimeUnit unit,
+                        BlockingQueue<Runnable> workQueue,
+                        ThreadFactory threadFactory,
+                        RejectedExecutionHandler handler)
+```
+
+
+
+- corePoolSize  核心线程数，默认情况一直存活，闲置状态也不会受到keepAliveTime限制，除非`allowCoreThreadTimeOut`设置为`true`。
+- maximumPoolSize  线程池所能容纳的最大线程数。超过这个数的线程将被阻塞。当任务队列为没有设置大小的LinkedBlockingDeque时，这个值无效。
+- keepAliveTime  非核心线程的闲置超时时间，超过这个时间就会被回收。
+- unit 指定`keepAliveTime`的单位，如`TimeUnit.SECONDS`。当将`allowCoreThreadTimeOut`设置为`true`时对corePoolSize生效。
+- workQueue 线程池中的任务队列.常用的有三种队列，`SynchronousQueue`,`LinkedBlockingDeque`,`ArrayBlockingQueue`
+- threadFactory  线程工厂，提供创建新线程的功能。ThreadFactory是一个接口，只有一个方
+- RejectedExecutionHandler  拒绝策略，当线程池中的资源已经全部使用，添加新线程被拒绝时，会调用rejectedExecution方法。
+
+ 
+
+
+
+
+
 # 分布式
 
 ## 分布式事务
